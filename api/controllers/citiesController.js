@@ -1,9 +1,15 @@
-const citiesModel = require("../models/Cities");
+const citiesModel = require("../models/citiesModel");
+const theatresModel = require("../models/theatresModel");
 
 const citiesController = require("express").Router();
 
 citiesController.get("/", (req, res)=>{
-    citiesModel.findAll().then(result=>{
+    citiesModel.findAll({
+        include: {
+            model: theatresModel,
+            attributes: ['id', 'name', 'address'],
+        }
+    }).then(result=>{
         return res.status(200).json({
             date: new Date(),
             data: result

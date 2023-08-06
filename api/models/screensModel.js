@@ -1,8 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../configs/database");
-const theatresModel = require("./Theatres");
 
-const Cities = sequelize.define("Cities", {
+const screensModel = sequelize.define("Screen", {
     id: {
         type: DataTypes.BIGINT,
         primaryKey: true,
@@ -14,12 +13,7 @@ const Cities = sequelize.define("Cities", {
     }
 }, { timestamps: false });
 
-//Cities.hasMany(Theatres);
-//Cities.sync();
 
-(async () => {
-    await Cities.sync({ force: true });
-    // Code here
-})();
+screensModel.sync();
 
-module.exports = Cities;
+module.exports = screensModel;
