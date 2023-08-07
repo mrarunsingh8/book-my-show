@@ -4,12 +4,7 @@ const theatresModel = require("../models/theatresModel");
 const citiesController = require("express").Router();
 
 citiesController.get("/", (req, res)=>{
-    citiesModel.findAll({
-        include: {
-            model: theatresModel,
-            attributes: ['id', 'name', 'address'],
-        }
-    }).then(result=>{
+    citiesModel.findAll().then(result=>{
         return res.status(200).json({
             date: new Date(),
             data: result
@@ -35,7 +30,7 @@ citiesController.get("/:id", (req, res)=>{
             error: error
         });
     });
-})
+});
 
 citiesController.post("/", async (req, res, next)=>{
     const {name} = req.body;    

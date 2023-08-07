@@ -1,15 +1,11 @@
 const citiesModel = require("../models/citiesModel");
+const screensModel = require("../models/screensModel");
 const theatresModel = require("../models/theatresModel");
 
 const theatresController = require("express").Router();
 
 theatresController.get("/", (req, res)=>{
-    theatresModel.findAll({
-        include: {
-            model: citiesModel,
-            attributes: ['name'],
-        }
-    }).then(result=>{
+    theatresModel.findAll().then(result=>{
         return res.status(200).json({
             date: new Date(),
             data: result
@@ -37,9 +33,8 @@ theatresController.get("/:id", (req, res)=>{
     });
 });
 
-theatresController.post("/:cityId", (req, res)=>{
-    let {cityId} = req.params;
-    let {name, address} = req.body;
+theatresController.post("/", (req, res)=>{
+    let {cityId, name, address} = req.body;
     theatresModel.create({cityId, name, address}).then((theatre)=>{
         return res.status(200).json({
             date: new Date(),
@@ -129,6 +124,99 @@ theatresController.delete("/:id", (req, res)=>{
             date: new Date(),
             deletedId: id,
             message: "The theatre has been Deleted.",
+        });
+    }).catch((err)=>{
+        return res.status(400).json({
+            dateTime: new Date(),
+            error: err
+        });
+    });
+});
+
+
+theatresController.get("/:theatreId/screens", (req, res, next)=>{
+    let {theatreId} = req.params;
+    theatresModel.findAll({
+        include: {
+            model: screensModel,
+            attributes: ["name"]
+        },
+        where: {theatreId}
+    }).then(result=>{
+        return res.status(200).json({
+            date: new Date(),
+            data: result
+        });
+    }).catch(error=>{
+        return res.status(400).json({
+            dateTime: new Date(),
+            error: error
+        });
+    });
+});
+
+theatresController.get("/:theatreId/screens/:id", (req, res, next)=>{
+    let {theatreId, id} = req.params;
+    screensModel.findAll({
+        where: {theatreId, id}
+    }).then(result=>{
+        return res.status(200).json({
+            date: new Date(),
+            data: result
+        });
+    }).catch(error=>{
+        return res.status(400).json({
+            dateTime: new Date(),
+            error: error
+        });
+    });
+});
+
+
+theatresController.post("/:theatreId/screens/", (req, res, next)=>{
+    let {theatreId} = req.params;
+
+    let {name} = req.body;
+    screensModel.create({theatreId, name}).then((screen)=>{
+        return res.status(200).json({
+            date: new Date(),
+            insertedId: screen.id,
+            message: "A new screen created."
+        });
+    }).catch(error=>{
+        return res.status(400).json({
+            dateTime: new Date(),
+            error: error
+        });
+    });
+});
+
+
+theatresController.put("/:theatreId/screens/:id", (req, res, next)=>{
+    let {theatreId, id} = req.params;
+    let {name} = req.body;
+    screensModel.update({name}, {where: {id}}).then((screen)=>{
+        return res.status(200).json({
+            date: new Date(),
+            insertedId: screen.id,
+            message: "The screen has been updated."
+        });
+    }).catch(error=>{
+        return res.status(400).json({
+            dateTime: new Date(),
+            error: error
+        });
+    });
+});
+
+
+theatresController.delete("/:theatreId/screens/:id", (req, res)=>{
+    let {theatreId, id} = req.params;
+    screensModel.destroy({where: {theatreId, id}}).then(()=>{
+        return res.status(201).json({
+            date: new Date(),
+            deletedId: id,
+            message: "The screen has been Deleted.",
         });
     }).catch((err)=>{
         return res.status(400).json({

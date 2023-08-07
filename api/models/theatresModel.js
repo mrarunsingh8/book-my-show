@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../configs/database");
+const screensModel = require("./screensModel");
 
 const theatresModel = sequelize.define("Theatres", {
     id: {
@@ -8,7 +9,7 @@ const theatresModel = sequelize.define("Theatres", {
         autoIncrement: true
     },
     cityId: {
-        type: DataTypes.BIGINT
+        type: DataTypes.BIGINT,
     },
     name: {
         type: DataTypes.STRING(50),
@@ -20,7 +21,8 @@ const theatresModel = sequelize.define("Theatres", {
     }
 }, { timestamps: false });
 
-
+theatresModel.hasMany(screensModel, {foreignKey: 'theatreId'});
+screensModel.belongsTo(theatresModel, {foreignKey: 'theatreId'});
 theatresModel.sync();
 
 module.exports = theatresModel;

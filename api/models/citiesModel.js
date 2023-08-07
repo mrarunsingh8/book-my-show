@@ -15,7 +15,7 @@ const citiesModel = sequelize.define("Cities", {
 }, { timestamps: false });
 
 citiesModel.sync();
-citiesModel.hasMany(theatresModel);
-theatresModel.belongsTo(citiesModel);
+citiesModel.hasMany(theatresModel, {foreignKey: 'cityId'});
+theatresModel.belongsTo(citiesModel, {foreignKey: 'cityId'});
 
 module.exports = citiesModel;

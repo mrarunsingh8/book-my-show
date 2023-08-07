@@ -7,6 +7,9 @@ const screensModel = sequelize.define("Screen", {
         primaryKey: true,
         autoIncrement: true
     },
+    theatreId: {
+        type: DataTypes.BIGINT
+    },
     name: {
         type: DataTypes.STRING(50),
         allowNull: false
