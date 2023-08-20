@@ -1,7 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../configs/database");
-const screensModel = require("./screensModel");
-const theatresModel = require("./theatresModel");
+const showsModel = require("./showsModel");
 
 const moviesModel = sequelize.define("Movies", {
     id: {
@@ -16,31 +15,17 @@ const moviesModel = sequelize.define("Movies", {
     description: {
         type: DataTypes.STRING(3000),
     },
+    price:{
+        type: DataTypes.FLOAT
+    },
     languages: {
         type: DataTypes.STRING(250),
     }
 }, { timestamps: false });
 
-/* const moviesTheatre = sequelize.define("Movies_Theatre", {
-    id: {
-        type: DataTypes.BIGINT,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    movieId: {
-        type: DataTypes.BIGINT,
-    },
-    theatreId: {
-        type: DataTypes.BIGINT,
-    }
-}, { timestamps: false }); */
-
 moviesModel.sync();
 
-moviesModel.belongsToMany(theatresModel, {through: "Movies_Theatre"});
-theatresModel.belongsToMany(moviesModel, {through: "Movies_Theatre"});
-
-/* theatresModel.hasMany(moviesTheatre, {through: "Movies_Theatre"});
-moviesTheatre.belongsToMany(theatresModel, {through: "Movies_Theatre"}); */
+moviesModel.hasMany(showsModel, { foreignKey: 'movieId'});
+showsModel.belongsTo(moviesModel, { foreignKey: 'movieId'});
 
 module.exports = moviesModel;

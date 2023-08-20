@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../configs/database");
+const theatreSheetsModel = require("./theatreSheetsModel");
 const screensModel = require("./screensModel");
 
 const theatresModel = sequelize.define("Theatres", {
@@ -21,8 +22,14 @@ const theatresModel = sequelize.define("Theatres", {
     }
 }, { timestamps: false });
 
-theatresModel.hasMany(screensModel, {foreignKey: 'theatreId'});
-screensModel.belongsTo(theatresModel, {foreignKey: 'theatreId'});
 theatresModel.sync();
+
+
+theatresModel.hasMany(screensModel, {foreignKey: "theatreId"});
+screensModel.belongsTo(theatresModel, {foreignKey: "theatreId"});
+
+/* theatresModel.hasMany(theatreSheetsModel, {foreignKey: "theatreId"});
+theatreSheetsModel.belongsTo(theatresModel, {foreignKey: "theatreId"}); */
+
 
 module.exports = theatresModel;
