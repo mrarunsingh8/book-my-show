@@ -1,9 +1,9 @@
+const redisClient = require("./../configs/redisClient");
+
 const moviesController = require("express").Router();
-const { Model } = require("sequelize");
 const moviesModel = require("../models/moviesModel");
-const theatresModel = require("../models/theatresModel");
-const showsModel = require("../models/showsModel");
-const screensModel = require("../models/screensModel");
+const movieReviewsModel = require("../models/movieReviewsModel");
+
 
 moviesController.get("/", (req, res)=>{
     moviesModel.findAll().then(result=>{
@@ -19,12 +19,15 @@ moviesController.get("/", (req, res)=>{
     });
 });
 
-moviesController.get("/:id", (req, res)=>{
+moviesController.get("/:id", async (req, res)=>{
     let {id} = req.params;
+    let key = `movie_${id}`;
+    let movie = await redisClient.get(key);
     moviesModel.findByPk(id).then(result=>{
+        movie = movie && JSON.parse(movie);
         return res.status(200).json({
             date: new Date(),
-            data: result
+            data: {...movie, ...result}
         });
     }).catch(error=>{
         return res.status(400).json({
@@ -42,6 +45,66 @@ moviesController.post("/", (req, res)=>{
             date: new Date(),
             insertedId: result.id,
             message: "A new movie has been created.",
+        });
+    }).catch(error=>{
+        return res.status(400).json({
+            dateTime: new Date(),
+            error: error
+        });
+    });
+});
+
+moviesController.get("/:movieId/reviews", (req, res)=>{
+    let {movieId} = req.params;
+    movieReviewsModel.aggregate([
+        {
+          $group: {
+            _id: null,
+            averageRating: { $avg: '$rating' },
+            totalCount: { $sum: 1 },
+            reviews: { $push: '$$ROOT' }
+          }
+        }
+      ]).then(result=>{
+        return res.status(200).json({
+            date: new Date(),
+            data: result
+        });
+    }).catch(error=>{
+        return res.status(400).json({
+            dateTime: new Date(),
+            error: error
+        });
+    });
+});
+
+moviesController.post("/:movieId/reviews", (req, res)=>{
+    let {movieId} = req.params;
+    let {userId, comment, rating} = req.body;
+    let review = new movieReviewsModel({userId, movieId, comment, rating});
+    review.save().then(result=>{
+        return res.status(201).json({
+            date: new Date(),
+            message: "The review has been added.",
+        });
+    }).catch(error=>{
+        return res.status(400).json({
+            dateTime: new Date(),
+            error: error
+        });
+    });
+});
+
+
+moviesController.post("/:movieId/reviews/:reviewId/reaction", (req, res)=>{
+    let {movieId, reviewId} = req.params;
+    let {reaction} = req.body;
+    movieReviewsModel.findByIdAndUpdate(reviewId, {
+        $inc: { likes: (reaction === "like")?1:0, dislikes: (reaction === "dislike")?1:0 }
+    }, { new: true }).then(result=>{
+        return res.status(201).json({
+            date: new Date(),
+            message: "Your reaction has been recorded.",
         });
     }).catch(error=>{
         return res.status(400).json({

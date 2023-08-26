@@ -166,6 +166,16 @@ It will start a server for production use.
 | :-------- | :------- | :-------------------------------- |
 | `id`      | `string` |  **Required**. movieId |
 
+
+##### Get Movie reviews by movieId
+
+```http
+  GET /movies/{:movieId}/reviews
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `movieId`      | `string` |  **Required**. movieId |
+
 ##### Create a Movie 
 
 ```http
@@ -178,6 +188,41 @@ It will start a server for production use.
 | `languages`      | `string` |  **Required**. movie in languages like English, Hindi |
 | `categories`      | `string` |  **Required**. movie categories like Biography, Drama, Historical |
 
+
+##### Create Movie reviews
+
+```http
+  POST /movies/{:movieId}/reviews
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `movieId`      | `string` |  **Required**. movieId |
+
+
+| Body | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `userId`      | `number` |  **Required**. userId |
+| `comment`      | `string` |  **Required**. comment |
+| `rating`      | `number<min: 0, max: 10>` |  **Required**. ratings |
+
+
+
+##### Create reaction on Movies review
+
+```http
+  POST /movies/{:movieId}/reviews/{reviewId}/reaction
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `movieId`      | `string` |  **Required**. movieId |
+| `reviewId`      | `string` |  **Required**. reviewId |
+
+
+| Body | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `reaction`      | `ENUM<like|dislike>` |  **Required**. reaction |
 
 ##### Update Movie 
 
