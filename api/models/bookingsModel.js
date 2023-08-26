@@ -34,6 +34,12 @@ const bookingsModel = sequelize.define("Bookings", {
         defaultValue: "Process"
     }
 }, {
+    indexes: [
+        {
+            name: "transactionId_cityId_theatreId_movieId_date_paymentStatus",
+            fields: ["transactionId", "cityId", "theatreId", "movieId", "date", "paymentStatus"]
+        }
+    ],
     timestamps: true
 });
 
