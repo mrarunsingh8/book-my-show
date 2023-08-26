@@ -7,9 +7,37 @@ const bookingsValidation = require("../validations/bookingsValidation");
 
 const bookingsController = require("express").Router();
 
-/* bookingsController.get("/", ()=>{
+bookingsController.get("/", (req, res)=>{
+    bookingsModel.findAndCountAll().then(result=>{
+        return res.status(200).json({
+            date: new Date(),
+            count: result?.count,
+            data: result?.rows
+        });
+    }).catch(error=>{
+        return res.status(400).json({
+            dateTime: new Date(),
+            error: error
+        });
+    });
+});
 
-}); */
+
+
+bookingsController.get("/:bookingId", (req, res)=>{
+    let {bookingId} = req.params;
+    bookingsModel.findByPk(bookingId).then(result=>{
+        return res.status(200).json({
+            date: new Date(),
+            data: result
+        });
+    }).catch(error=>{
+        return res.status(400).json({
+            dateTime: new Date(),
+            error: error
+        });
+    });
+});
 
 
 bookingsController.post("/", async (req, res, next)=>{

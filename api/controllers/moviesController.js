@@ -2,6 +2,8 @@ const moviesController = require("express").Router();
 const { Model } = require("sequelize");
 const moviesModel = require("../models/moviesModel");
 const theatresModel = require("../models/theatresModel");
+const showsModel = require("../models/showsModel");
+const screensModel = require("../models/screensModel");
 
 moviesController.get("/", (req, res)=>{
     moviesModel.findAll().then(result=>{
@@ -83,7 +85,6 @@ moviesController.delete("/:id", (req, res)=>{
         });
     });
 });
-
 
 
 
